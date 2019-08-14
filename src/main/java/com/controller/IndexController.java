@@ -3,10 +3,8 @@ package com.controller;
 import com.config.URLConstant;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
-import com.dingtalk.api.request.OapiUserGetRequest;
-import com.dingtalk.api.request.OapiUserGetuserinfoRequest;
-import com.dingtalk.api.response.OapiUserGetResponse;
-import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
+import com.dingtalk.api.request.*;
+import com.dingtalk.api.response.*;
 import com.taobao.api.ApiException;
 import com.util.AccessTokenUtil;
 import com.util.ServiceResult;
@@ -14,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 企业内部E应用Quick-Start示例代码 实现了最简单的免密登录（免登）功能
@@ -90,7 +87,55 @@ public class IndexController {
             return null;
         }
     }
-
+    @PostMapping("/listDept")
+    public List listDept(){
+        //获取accessToken,注意正是代码要有异常流处理
+        String accessToken = AccessTokenUtil.getToken();
+        DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_DEPT_LISR);
+        OapiDepartmentListRequest request = new OapiDepartmentListRequest();
+        request.setId("1");
+        request.setHttpMethod("GET");
+        try {
+            OapiDepartmentListResponse response = client.execute(request, accessToken);
+            return response.getDepartment();
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
+    @PostMapping("/getOrgUserCount")
+    public Long getOrgUserCount(){
+        //获取accessToken,注意正是代码要有异常流处理
+        String accessToken = AccessTokenUtil.getToken();
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/get_org_user_count");
+        OapiUserGetOrgUserCountRequest request = new OapiUserGetOrgUserCountRequest();
+        request.setOnlyActive(1L);
+        request.setHttpMethod("GET");
+        try {
+            OapiUserGetOrgUserCountResponse response = client.execute(request, accessToken);
+            return response.getCount();
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    @PostMapping("/listRecord")
+    public List listRecord(){
+        //获取accessToken,注意正是代码要有异常流处理
+        String accessToken = AccessTokenUtil.getToken();
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/attendance/listRecord");
+        OapiAttendanceListRecordRequest request = new OapiAttendanceListRecordRequest();
+        request.setCheckDateFrom("2019-05-01 00:00:00");
+        request.setCheckDateTo("2019-05-05 00:00:00");
+        request.setUserIds(Arrays.asList("manager6593"));
+        try {
+            OapiAttendanceListRecordResponse execute = client.execute(request,accessToken);
+            return execute.getRecordresult();
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
 }
 
 

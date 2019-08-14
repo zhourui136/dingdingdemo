@@ -15,4 +15,8 @@ public class URLConstant {
      *获取用户姓名的接口url
      */
     public static final String URL_USER_GET = "https://oapi.dingtalk.com/user/get";
+    /**
+     * 获取部门列表
+     */
+    public static final String URL_DEPT_LISR="https://oapi.dingtalk.com/department/list";
 }
